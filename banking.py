@@ -1,3 +1,9 @@
+# by Shriya Sateesh
+# Finished 4/24/2023
+# Banking system with tkinter GUI for Code2College Elite 102 Course
+# Utilizes users and accounts tables in MySQL
+# Written originally on VSCode
+
 import mysql.connector
 import datetime
 import tkinter as tk
