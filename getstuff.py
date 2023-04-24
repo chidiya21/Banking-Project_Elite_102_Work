@@ -1,3 +1,5 @@
+#FIRST ATTEMPT IGNORE
+
 import mysql.connector
 import datetime
 
