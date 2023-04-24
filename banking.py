@@ -90,12 +90,82 @@ def create_account_gui():
 
     root.mainloop()
 
+# function for modify accounts with value from gui
+def modify_account(firstname, lastname, birthday, address, balance, pin, user_id):
+    connection = connect_to_db()
+    cursor = connection.cursor()
+
+    sql = "UPDATE users SET firstname = %s, lastname = %s, birthday = %s, address = %s WHERE id = %s"
+    values = (firstname, lastname, birthday, address, user_id)
+    cursor.execute(sql, values)
+
+    user_id = cursor.lastrowid
+
+    sql = "UPDATE accounts SET balance = %s, pin = %s WHERE user_id = %s"
+    values = (balance, pin, user_id)
+    cursor.execute(sql, values)
+
+    connection.commit()
+
+    messagebox.showinfo("Congratulations!", f"Your account has been modified: {firstname} {lastname} with ID {user_id}.")
+
+    cursor.close()
+    connection.close()
+
+# pops up after pressing modify button in open account menu, input suggested values
+def modify_account_gui(balance, user_id):
+    def submit_modify():
+        firstname = firstname_entry.get()
+        lastname = lastname_entry.get()
+        birthday = birthday_entry.get()
+        address = address_entry.get()
+        pin = pin_entry.get()
+        modify_account(firstname, lastname, birthday, address, balance, pin, user_id)
+
+    
+    root = tk.Tk()
+    root.title('Modify Account: Please re-enter all information')
+
+    firstname_label = tk.Label(root, text='First Name:')
+    firstname_label.pack()
+
+    firstname_entry = tk.Entry(root)
+    firstname_entry.pack()
+
+    lastname_label = tk.Label(root, text='Last Name:')
+    lastname_label.pack()
+
+    lastname_entry = tk.Entry(root)
+    lastname_entry.pack()
+
+    birthday_label = tk.Label(root, text='Birthday (YYYY-MM-DD):')
+    birthday_label.pack()
+
+    birthday_entry = tk.Entry(root)
+    birthday_entry.pack()
+
+    address_label = tk.Label(root, text='Address:')
+    address_label.pack()
+
+    address_entry = tk.Entry(root)
+    address_entry.pack()
+
+    pin_label = tk.Label(root, text='PIN (4-digits):')
+    pin_label.pack()
+
+    pin_entry = tk.Entry(root, show='*')
+    pin_entry.pack()
+
+    submit_button = tk.Button(root, text='Submit', command=submit_modify)
+    submit_button.pack()
+
+    root.mainloop()
+
 # called by delete_gui, deletes account from accounts tablen and users table (apparently needs two sql statements cause of referential integrity)
 def delete_account(user_id):
     connection = connect_to_db()
     cursor = connection.cursor()
 
-    print(user_id)
     sql = "DELETE FROM accounts WHERE user_id = %s"
     values = (user_id,)
     cursor.execute(sql, values)
@@ -146,6 +216,8 @@ def open_account_gui():
             withdraw_button = tk.Button(root, text='Withdraw', command=lambda: withdraw_gui(user_id, pin))
             withdraw_button.pack()
             deposit_button = tk.Button(root, text='Deposit', command=lambda: deposit_gui(user_id, pin))
+            deposit_button.pack()
+            deposit_button = tk.Button(root, text='Modify', command=lambda: modify_account_gui(balance, user_id))
             deposit_button.pack()
             delete_button = tk.Button(root, text='Delete', command=lambda: delete_gui(user_id))
             delete_button.pack()
